@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --color-green-50: #f0faf4;
+  --color-green-100: #d9f2e3;
+  --color-green-200: #b3e5c7;
+  --color-green-500: #3a8f5c;
+  --color-green-600: #2d7348;
+  --color-green-700: #215736;
+  --color-teal-400: #2ec4a0;
+  --color-teal-500: #25a084;
+  --font-sans: 'Nunito', sans-serif;
+}
+
+* {
+  font-family: 'Nunito', sans-serif;
+}
+
+:root {
+  --background: #f7fbf9;
+  --foreground: #1a2e22;
+  --card: #ffffff;
+  --card-foreground: #1a2e22;
+  --primary: #3a8f5c;
+  --primary-foreground: #ffffff;
+  --secondary: #e8f5ee;
+  --secondary-foreground: #2d5c3f;
+  --muted: #f0faf4;
+  --muted-foreground: #6b8f7a;
+  --accent: #2ec4a0;
+  --accent-foreground: #ffffff;
+  --border: #c8e6d4;
+  --ring: #3a8f5c;
+  --radius: 10px;
+  --danger: #e53e3e;
+  --warning: #dd9911;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* Hide scrollbar by default */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: transparent; border-radius: 3px; }
+*:hover::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); }

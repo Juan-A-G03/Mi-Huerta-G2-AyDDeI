@@ -1,0 +1,10 @@
+{
+  "description": "Provides intuitive interface sketches for university projects to help students visualize and plan their user experience design effectively.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
