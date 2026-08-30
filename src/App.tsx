@@ -18,6 +18,7 @@ import CosechasPendientes from './pages/CosechasPendientes'
 import CosechaExito from './pages/CosechaExito'
 import HistorialCosechas from './pages/HistorialCosechas'
 import Reportes from './pages/Reportes'
+import ManualUsuario from './pages/ManualUsuario'
 import Perfil from './pages/Perfil'
 import ModificarUsuario from './pages/ModificarUsuario'
 import CambiarPassword from './pages/CambiarPassword'
@@ -68,6 +69,7 @@ export default function App() {
     'cosecha-exito': <CosechaExito ctx={ctx} />,
     'historial-cosechas': <HistorialCosechas ctx={ctx} />,
     reportes: <Reportes ctx={ctx} />,
+    'manual-usuario': <ManualUsuario ctx={ctx} />,
     perfil: <Perfil ctx={ctx} />,
     'modificar-usuario': <ModificarUsuario ctx={ctx} />,
     'cambiar-password': <CambiarPassword ctx={ctx} />,

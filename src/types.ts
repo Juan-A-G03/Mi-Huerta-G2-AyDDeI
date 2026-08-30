@@ -15,6 +15,7 @@ export type Page =
   | 'cosecha-exito'
   | 'historial-cosechas'
   | 'reportes'
+  | 'manual-usuario'
   | 'perfil'
   | 'modificar-usuario'
   | 'cambiar-password'

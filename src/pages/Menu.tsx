@@ -7,6 +7,7 @@ const menuItems = [
   { label: 'Siembras a finalizar', page: 'siembras-finalizar' as const, emoji: '🌱' },
   { label: 'Reportes', page: 'reportes' as const, emoji: '📊' },
   { label: 'Familias', page: 'familias' as const, emoji: '🌻' },
+  { label: 'Manual de usuario', page: 'manual-usuario' as const, emoji: '📘' },
   { label: 'Tutoriales', page: 'tutoriales' as const, emoji: '🎬' },
 ]
 
