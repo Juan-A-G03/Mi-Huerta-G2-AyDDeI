@@ -4,7 +4,7 @@ import type { NavContext } from '../types'
 import { useData, compareDdMm, getFormattedToday } from '../context/DataContext'
 
 export default function CosechasPendientes({ ctx }: { ctx: NavContext }) {
-  const { cosechas, completarCosecha } = useData()
+  const { cosechas, completarCosecha, familias } = useData()
   const [cosecharFamilia, setCosecharFamilia] = useState<{ id: string; familia: string; cultivoList: string[] } | null>(
     null
   )
@@ -14,12 +14,27 @@ export default function CosechasPendientes({ ctx }: { ctx: NavContext }) {
   const pendientesActivas = cosechas.filter(
     (c) => !c.completada && compareDdMm(hoy, c.fechaDesde) >= 0 && compareDdMm(hoy, c.fechaHasta) <= 0
   )
+  const pendientesPorFamilia = Array.from(
+    new Map(
+      pendientesActivas.map((c) => {
+        const cultivoList = familias.find((f) => f.nombre === c.familia)?.cultivos ?? [c.cultivo]
+        return [
+          c.familia,
+          {
+            id: c.id,
+            familia: c.familia,
+            cultivoList,
+            fechaHasta: c.fechaHasta,
+          },
+        ]
+      })
+    ).values()
+  )
 
-  const handleHarvestClick = (c: (typeof cosechas)[0]) => {
-    let cultivoList = [c.cultivo]
-    if (c.familia === 'Tubérculos') cultivoList = ['Papa', 'Batata', 'Zanahoria']
-    if (c.familia === 'Solanáceas') cultivoList = ['Tomate', 'Morrón']
-    setCosecharFamilia({ id: c.id, familia: c.familia, cultivoList })
+  const handleHarvestClick = (familia: string, cultivoList: string[]) => {
+    const item = pendientesActivas.find((c) => c.familia === familia)
+    if (!item) return
+    setCosecharFamilia({ id: item.id, familia, cultivoList })
   }
 
   const handleFinalizarCosecha = () => {
@@ -56,7 +71,7 @@ export default function CosechasPendientes({ ctx }: { ctx: NavContext }) {
           Lista de Cosechas Pendientes
         </h2>
 
-        {pendientesActivas.length === 0 ? (
+        {pendientesPorFamilia.length === 0 ? (
           <div className="bg-white rounded-2xl border border-[var(--border)] p-6 text-center shadow-xs">
             <span className="text-3xl mb-2 block">🎉</span>
             <p className="font-bold text-base text-[var(--primary)]">¡No tienes cosechas pendientes por hoy!</p>
@@ -64,37 +79,41 @@ export default function CosechasPendientes({ ctx }: { ctx: NavContext }) {
           </div>
         ) : (
           <div className="flex flex-col gap-3">
-            {pendientesActivas.map((c) => (
-              <div
-                key={c.id}
-                className="bg-white rounded-2xl border border-[var(--border)] shadow-sm p-4 flex items-center justify-between gap-3"
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center"
-                    style={{ background: 'var(--secondary)' }}
-                  >
-                    <span className="text-2xl">🧺</span>
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm" style={{ color: 'var(--foreground)' }}>
-                      Familia: {c.familia}
-                    </p>
-                    <p className="text-xs text-[var(--muted-foreground)]">Cultivo: {c.cultivo}</p>
-                    <p className="text-xs font-semibold mt-0.5" style={{ color: 'var(--warning)' }}>
-                      Disponible hasta {c.fechaHasta}
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => handleHarvestClick(c)}
-                  className="px-4 py-2 rounded-lg text-white text-sm font-bold shadow-xs hover:opacity-90 transition-opacity shrink-0"
-                  style={{ background: 'var(--primary)' }}
+            {pendientesPorFamilia.map((c) => {
+              const textoCultivos = c.cultivoList.join(', ')
+
+              return (
+                <div
+                  key={c.familia}
+                  className="bg-white rounded-2xl border border-[var(--border)] shadow-sm p-4 flex items-center justify-between gap-3"
                 >
-                  Cosechar
-                </button>
-              </div>
-            ))}
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-12 h-12 rounded-xl flex items-center justify-center"
+                      style={{ background: 'var(--secondary)' }}
+                    >
+                      <span className="text-2xl">🧺</span>
+                    </div>
+                    <div>
+                      <p className="font-bold text-sm" style={{ color: 'var(--foreground)' }}>
+                        Familia: {c.familia}
+                      </p>
+                      <p className="text-xs text-[var(--muted-foreground)]">Cultivos: {textoCultivos}</p>
+                      <p className="text-xs font-semibold mt-0.5" style={{ color: 'var(--warning)' }}>
+                        Disponible hasta {c.fechaHasta}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleHarvestClick(c.familia, c.cultivoList)}
+                    className="px-4 py-2 rounded-lg text-white text-sm font-bold shadow-xs hover:opacity-90 transition-opacity shrink-0"
+                    style={{ background: 'var(--primary)' }}
+                  >
+                    Cosechar
+                  </button>
+                </div>
+              )
+            })}
           </div>
         )}
 

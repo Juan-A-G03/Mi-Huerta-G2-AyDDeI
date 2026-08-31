@@ -4,10 +4,29 @@ import type { NavContext } from '../types'
 import { useData } from '../context/DataContext'
 
 export default function FamiliaDetalle({ ctx }: { ctx: NavContext }) {
-  const { familias, darDeBajaFamilia } = useData()
+  const { familias, darDeBajaFamilia, siembras, cosechas } = useData()
   const nombre = (ctx.params.familia as string) || 'Tubérculos'
   const info = familias.find((f) => f.nombre === nombre) ?? familias[0]
   const [showBajaModal, setShowBajaModal] = useState(false)
+
+  const cultivosActivos = Array.from(
+    new Set([
+      ...siembras
+        .filter((s) => s.familia === nombre && s.estado === 'PENDIENTE' && s.id.startsWith('s_'))
+        .map((s) => s.cultivo),
+      ...cosechas
+        .filter((c) => c.familia === nombre && !c.completada && c.id.startsWith('c_'))
+        .map((c) => c.cultivo),
+    ])
+  )
+  const puedeDarDeBaja = cultivosActivos.length === 0
+
+  const handleDarDeBaja = () => {
+    if (!puedeDarDeBaja) return
+    darDeBajaFamilia(nombre)
+    setShowBajaModal(false)
+    ctx.navigateTo('familias')
+  }
 
   const params = [
     { emoji: '💧', label: 'Humedad del Sustrato', value: info.humedad, sub: 'Manejar niveles de riego' },
@@ -84,17 +103,31 @@ export default function FamiliaDetalle({ ctx }: { ctx: NavContext }) {
             <h3 className="font-bold text-base mb-2" style={{ color: 'var(--foreground)' }}>
               Baja de Familia ({nombre})
             </h3>
-            <p className="text-sm mb-4" style={{ color: 'var(--muted-foreground)' }}>
-              Al dar de baja la familia <strong>{nombre}</strong>, esta página y todos sus cultivos estarán ocultos.
-              Ya no habrá notificaciones para fechas de siembra. ¿Está seguro de esta acción?
-            </p>
+            {puedeDarDeBaja ? (
+              <p className="text-sm mb-4" style={{ color: 'var(--muted-foreground)' }}>
+                Al dar de baja la familia <strong>{nombre}</strong>, esta página y todos sus cultivos estarán ocultos.
+                Ya no habrá notificaciones para fechas de siembra. ¿Está seguro de esta acción?
+              </p>
+            ) : (
+              <div className="mb-4">
+                <p className="text-sm font-semibold mb-2" style={{ color: 'var(--danger)' }}>
+                  No se puede dar de baja esta familia porque hay cultivos activos en módulos.
+                </p>
+                <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
+                  Cultivos activos: {cultivosActivos.join(', ')}
+                </p>
+              </div>
+            )}
             <div className="flex gap-3">
               <button onClick={() => setShowBajaModal(false)}
                 className="flex-1 py-2 rounded-lg font-bold text-sm border border-[var(--border)] hover:bg-[var(--secondary)]">
                 Cancelar
               </button>
-              <button onClick={() => { darDeBajaFamilia(nombre); setShowBajaModal(false); ctx.navigateTo('familias') }}
-                className="flex-1 py-2 rounded-lg font-bold text-sm text-white bg-red-500 hover:opacity-90">
+              <button
+                onClick={handleDarDeBaja}
+                disabled={!puedeDarDeBaja}
+                className="flex-1 py-2 rounded-lg font-bold text-sm text-white bg-red-500 hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
                 Aceptar
               </button>
             </div>

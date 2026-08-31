@@ -998,6 +998,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   const darDeBajaFamilia = (nombre: string) => {
+    const tieneCultivosActivos =
+      siembras.some((s) => s.familia === nombre && s.estado === 'PENDIENTE' && s.id.startsWith('s_')) ||
+      cosechas.some((c) => c.familia === nombre && !c.completada && c.id.startsWith('c_'))
+
+    if (tieneCultivosActivos) {
+      return
+    }
+
     setFamilias((prev) => prev.map((f) => (f.nombre === nombre ? { ...f, activa: false } : f)))
   }
 
