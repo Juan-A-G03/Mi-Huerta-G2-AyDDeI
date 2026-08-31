@@ -4,13 +4,14 @@ import type { NavContext } from '../types'
 import { useData, type Familia } from '../context/DataContext'
 
 export default function FamiliaCrear({ ctx }: { ctx: NavContext }) {
-  const { agregarFamilia, modificarFamilia } = useData()
+  const { familias, cultivosData, agregarFamilia, modificarFamilia, asignarCultivoAFamilia } = useData()
   const esEdicion = ctx.params.editar === true
   const nombre = (ctx.params.familia as string) || ''
+  const familiaActual = esEdicion ? familias.find((f) => f.nombre === nombre) : undefined
 
   const [form, setForm] = useState({
     nombre: esEdicion ? nombre : '',
-    descripcion: esEdicion ? 'Lorem ipsum dolor sit amet consectetur adipiscing elit...' : '',
+    descripcion: familiaActual?.descripcion ?? '',
     humedadMin: esEdicion ? '60' : '',
     humedadMax: esEdicion ? '80' : '',
     luzMin: esEdicion ? '6' : '',
@@ -20,9 +21,26 @@ export default function FamiliaCrear({ ctx }: { ctx: NavContext }) {
     fechaInicio: esEdicion ? '2026-04-01' : '',
     fechaFin: esEdicion ? '2026-05-31' : '',
   })
+  const [cultivos, setCultivos] = useState<string[]>(familiaActual?.cultivos ?? [])
+  const [cultivoAagregar, setCultivoAagregar] = useState('')
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm(f => ({ ...f, [k]: e.target.value }))
+
+  const cultivosSinAsignar = Object.values(cultivosData)
+    .filter((c) => !c.familia && !cultivos.includes(c.nombre))
+    .map((c) => c.nombre)
+
+  const agregarCultivo = () => {
+    if (cultivoAagregar) {
+      setCultivos((prev) => [...prev, cultivoAagregar])
+      setCultivoAagregar('')
+    }
+  }
+
+  const quitarCultivo = (c: string) => {
+    setCultivos((prev) => prev.filter((x) => x !== c))
+  }
 
   const handleGuardar = (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,13 +53,14 @@ export default function FamiliaCrear({ ctx }: { ctx: NavContext }) {
       luz: `${form.luzMin} - ${form.luzMax} hs`,
       temp: `${form.tempMin}°C - ${form.tempMax}°C`,
       ciclo: `${form.fechaInicio} - ${form.fechaFin}`,
-      cultivos: [],
+      cultivos,
     }
     if (esEdicion) {
       modificarFamilia(nombre, data)
     } else {
       agregarFamilia(data)
     }
+    cultivos.forEach((c) => asignarCultivoAFamilia(c, data.nombre))
     ctx.navigateTo('familias')
   }
 
@@ -107,16 +126,37 @@ export default function FamiliaCrear({ ctx }: { ctx: NavContext }) {
             <div>
               <h3 className="font-bold text-sm mb-2" style={{ color: 'var(--foreground)' }}>Cultivos de la Familia</h3>
               <div className="flex gap-2 flex-wrap mb-2">
-                {esEdicion && ['Batata', 'Papa', 'Zanahoria', 'Rábano'].map(c => (
-                  <span key={c} className="px-3 py-1 rounded-xl border border-[var(--border)] text-sm font-semibold"
-                    style={{ background: 'var(--secondary)', color: 'var(--foreground)' }}>{c}</span>
+                {cultivos.map((c) => (
+                  <span key={c} className="inline-flex items-center gap-1 px-3 py-1 rounded-xl border border-[var(--border)] text-sm font-semibold"
+                    style={{ background: 'var(--secondary)', color: 'var(--foreground)' }}>
+                    {c}
+                    <button type="button" onClick={() => quitarCultivo(c)}
+                      className="text-xs font-bold cursor-pointer" style={{ color: 'var(--danger)' }}>✕</button>
+                  </span>
                 ))}
+                {cultivos.length === 0 && (
+                  <span className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
+                    Sin cultivos asignados
+                  </span>
+                )}
               </div>
-              <button type="button"
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[var(--border)] text-sm font-semibold hover:bg-[var(--secondary)]"
-                style={{ color: 'var(--accent)' }}>
-                + Añadir cultivo
-              </button>
+
+              {cultivosSinAsignar.length > 0 && (
+                <div className="flex gap-2 items-center">
+                  <select value={cultivoAagregar} onChange={(e) => setCultivoAagregar(e.target.value)}
+                    className="flex-1 border border-[var(--border)] rounded-lg px-3 py-2 text-sm outline-none focus:border-[var(--primary)] bg-white">
+                    <option value="">Seleccionar cultivo sin asignar...</option>
+                    {cultivosSinAsignar.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                  <button type="button" onClick={agregarCultivo} disabled={!cultivoAagregar}
+                    className="flex items-center gap-1 px-3 py-2 rounded-lg border border-[var(--border)] text-sm font-semibold hover:bg-[var(--secondary)] disabled:opacity-50"
+                    style={{ color: 'var(--accent)' }}>
+                    + Añadir cultivo
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="flex gap-3 justify-end mt-2">

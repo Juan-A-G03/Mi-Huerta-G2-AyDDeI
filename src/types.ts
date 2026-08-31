@@ -6,6 +6,8 @@ export type Page =
   | 'familias'
   | 'familia-detalle'
   | 'familia-crear'
+  | 'cultivos'
+  | 'cultivo-crear'
   | 'cultivos-aceptados'
   | 'modulos-disponibles'
   | 'siembras-finalizar'

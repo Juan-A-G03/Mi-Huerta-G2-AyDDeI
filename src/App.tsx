@@ -10,6 +10,8 @@ import Notificaciones from './pages/Notificaciones'
 import Familias from './pages/Familias'
 import FamiliaDetalle from './pages/FamiliaDetalle'
 import FamiliaCrear from './pages/FamiliaCrear'
+import Cultivos from './pages/Cultivos'
+import CultivoCrear from './pages/CultivoCrear'
 import CultivosAceptados from './pages/CultivosAceptados'
 import ModulosDisponibles from './pages/ModulosDisponibles'
 import SiembrasFinalizarList from './pages/SiembrasFinalizarList'
@@ -57,6 +59,8 @@ export default function App() {
     familias: <Familias ctx={ctx} />,
     'familia-detalle': <FamiliaDetalle ctx={ctx} />,
     'familia-crear': <FamiliaCrear ctx={ctx} />,
+    cultivos: <Cultivos ctx={ctx} />,
+    'cultivo-crear': <CultivoCrear ctx={ctx} />,
     'cultivos-aceptados': <CultivosAceptados ctx={ctx} />,
     'modulos-disponibles': <ModulosDisponibles ctx={ctx} />,
     'siembras-finalizar': <SiembrasFinalizarList ctx={ctx} />,

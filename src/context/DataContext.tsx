@@ -143,6 +143,10 @@ interface DataContextType {
   agregarFamilia: (familia: Familia) => void
   modificarFamilia: (nombre: string, data: Familia) => void
   darDeBajaFamilia: (nombre: string) => void
+  crearCultivo: (info: CultivoInfo) => void
+  modificarCultivo: (nombreAnterior: string, info: CultivoInfo) => void
+  eliminarCultivo: (nombre: string) => void
+  asignarCultivoAFamilia: (cultivo: string, familia: string) => void
   actualizarUsuario: (usuario: Usuario) => void
   agregarDesvio: (desvio: Desvio) => void
   marcarDesvioCorregido: (id: number) => void
@@ -182,7 +186,7 @@ export const compareDdMm = (a: string, b: string) => {
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [showPopover, setShowPopover] = useState(true)
 
-  const [cultivosData] = useState<Record<string, CultivoInfo>>({
+  const [cultivosData, setCultivosData] = useState<Record<string, CultivoInfo>>({
     Papa: {
       nombre: 'Papa',
       cientifico: 'Solanum Tuberosum',
@@ -262,6 +266,351 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       nutrientes: ['Nitrógeno ligero', 'Fósforo'],
       cicloMinDias: 25,
       cicloMaxDias: 35,
+    },
+    Yuca: {
+      nombre: 'Yuca',
+      cientifico: 'Manihot Esculenta',
+      familia: 'Tubérculos',
+      descripcion:
+        'También llamada mandioca, es un tubérculo rico en carbohidratos y de gran importancia alimentaria en climas cálidos.',
+      humedad: '60% - 80%',
+      luz: '6 - 8 hs',
+      temp: '20°C - 30°C',
+      ciclo: '180 - 300 días',
+      ph: '5.5 - 7.0',
+      nutrientes: ['Potasio', 'Fósforo'],
+      cicloMinDias: 180,
+      cicloMaxDias: 300,
+    },
+    Morrón: {
+      nombre: 'Morrón',
+      cientifico: 'Capsicum Annuum',
+      familia: 'Solanáceas',
+      descripcion:
+        'Pimiento dulce de fruto carnoso, muy versátil en la cocina. Requiere calor constante y buena iluminación.',
+      humedad: '60% - 80%',
+      luz: '8 - 10 hs',
+      temp: '18°C - 28°C',
+      ciclo: '70 - 100 días',
+      ph: '6.0 - 7.0',
+      nutrientes: ['Nitrógeno', 'Fósforo', 'Potasio'],
+      cicloMinDias: 70,
+      cicloMaxDias: 100,
+    },
+    Berenjena: {
+      nombre: 'Berenjena',
+      cientifico: 'Solanum Melongena',
+      familia: 'Solanáceas',
+      descripcion:
+        'Hortaliza de fruto morado muy sensible al frío. Necesita suelos ricos y riego regular para un buen desarrollo.',
+      humedad: '65% - 85%',
+      luz: '8 - 10 hs',
+      temp: '20°C - 30°C',
+      ciclo: '80 - 120 días',
+      ph: '5.5 - 6.8',
+      nutrientes: ['Potasio', 'Fósforo', 'Calcio'],
+      cicloMinDias: 80,
+      cicloMaxDias: 120,
+    },
+    Chile: {
+      nombre: 'Chile',
+      cientifico: 'Capsicum',
+      familia: 'Solanáceas',
+      descripcion:
+        'Pimiento picante de gran variedad de sabores y niveles de pungencia. Aprecia el calor y el sol directo.',
+      humedad: '60% - 80%',
+      luz: '8 - 10 hs',
+      temp: '20°C - 30°C',
+      ciclo: '70 - 110 días',
+      ph: '6.0 - 7.0',
+      nutrientes: ['Nitrógeno', 'Fósforo', 'Potasio'],
+      cicloMinDias: 70,
+      cicloMaxDias: 110,
+    },
+    Zapallo: {
+      nombre: 'Zapallo',
+      cientifico: 'Cucurbita Máxima',
+      familia: 'Cucurbitáceas',
+      descripcion:
+        'Calabaza de fruto grande y pulpa dulce. Es una planta rastrera que requiere mucho espacio y agua.',
+      humedad: '70% - 90%',
+      luz: '8 - 10 hs',
+      temp: '20°C - 30°C',
+      ciclo: '90 - 130 días',
+      ph: '6.0 - 7.0',
+      nutrientes: ['Potasio', 'Fósforo', 'Materia Orgánica'],
+      cicloMinDias: 90,
+      cicloMaxDias: 130,
+    },
+    Pepino: {
+      nombre: 'Pepino',
+      cientifico: 'Cucumis Sativus',
+      familia: 'Cucurbitáceas',
+      descripcion:
+        'Fruto refrescante de crecimiento rápido. Trepador, ideal para cultivo vertical y riego frecuente.',
+      humedad: '70% - 90%',
+      luz: '8 - 10 hs',
+      temp: '20°C - 30°C',
+      ciclo: '50 - 70 días',
+      ph: '6.0 - 7.0',
+      nutrientes: ['Nitrógeno', 'Potasio', 'Fósforo'],
+      cicloMinDias: 50,
+      cicloMaxDias: 70,
+    },
+    Sandía: {
+      nombre: 'Sandía',
+      cientifico: 'Citrullus Lanatus',
+      familia: 'Cucurbitáceas',
+      descripcion:
+        'Fruta de gran tamaño, muy hidratante y dulce. Exige calor intenso y suelos bien drenados.',
+      humedad: '70% - 90%',
+      luz: '8 - 10 hs',
+      temp: '22°C - 32°C',
+      ciclo: '80 - 110 días',
+      ph: '6.0 - 6.8',
+      nutrientes: ['Potasio', 'Calcio', 'Magnesio'],
+      cicloMinDias: 80,
+      cicloMaxDias: 110,
+    },
+    Melón: {
+      nombre: 'Melón',
+      cientifico: 'Cucumis Melo',
+      familia: 'Cucurbitáceas',
+      descripcion:
+        'Fruta dulce y aromática de verano. Requiere temperaturas cálidas y riego constante en la floración.',
+      humedad: '70% - 90%',
+      luz: '8 - 10 hs',
+      temp: '22°C - 32°C',
+      ciclo: '80 - 120 días',
+      ph: '6.0 - 6.8',
+      nutrientes: ['Potasio', 'Fósforo', 'Calcio'],
+      cicloMinDias: 80,
+      cicloMaxDias: 120,
+    },
+    Brócoli: {
+      nombre: 'Brócoli',
+      cientifico: 'Brassica Oleracea Italica',
+      familia: 'Crucíferas',
+      descripcion:
+        'Hortaliza de inflorescencia verde muy nutritiva. Prefiere climas frescos y suelos fértiles.',
+      humedad: '60% - 80%',
+      luz: '6 - 8 hs',
+      temp: '10°C - 20°C',
+      ciclo: '60 - 100 días',
+      ph: '6.0 - 7.0',
+      nutrientes: ['Nitrógeno', 'Potasio', 'Boro'],
+      cicloMinDias: 60,
+      cicloMaxDias: 100,
+    },
+    Repollo: {
+      nombre: 'Repollo',
+      cientifico: 'Brassica Oleracea Capitata',
+      familia: 'Crucíferas',
+      descripcion:
+        'Hortaliza de hoja que forma una cabeza compacta. Resistente y de alto rendimiento en climas fríos.',
+      humedad: '60% - 80%',
+      luz: '6 - 8 hs',
+      temp: '10°C - 20°C',
+      ciclo: '70 - 120 días',
+      ph: '6.0 - 7.5',
+      nutrientes: ['Nitrógeno', 'Potasio', 'Calcio'],
+      cicloMinDias: 70,
+      cicloMaxDias: 120,
+    },
+    Coliflor: {
+      nombre: 'Coliflor',
+      cientifico: 'Brassica Oleracea Botrytis',
+      familia: 'Crucíferas',
+      descripcion:
+        'Hortaliza de flor blanca compacta. Requiere humedad estable y aportes regulares de nutrientes.',
+      humedad: '60% - 80%',
+      luz: '6 - 8 hs',
+      temp: '10°C - 20°C',
+      ciclo: '70 - 120 días',
+      ph: '6.0 - 7.5',
+      nutrientes: ['Nitrógeno', 'Boro', 'Molibdeno'],
+      cicloMinDias: 70,
+      cicloMaxDias: 120,
+    },
+    Rúcula: {
+      nombre: 'Rúcula',
+      cientifico: 'Eruca Vesicaria',
+      familia: 'Crucíferas',
+      descripcion:
+        'Hoja de sabor picante y crecimiento rápido. Ideal para ensaladas y cosecha continua.',
+      humedad: '55% - 75%',
+      luz: '5 - 7 hs',
+      temp: '12°C - 22°C',
+      ciclo: '30 - 50 días',
+      ph: '6.0 - 7.0',
+      nutrientes: ['Nitrógeno', 'Potasio'],
+      cicloMinDias: 30,
+      cicloMaxDias: 50,
+    },
+    Haba: {
+      nombre: 'Haba',
+      cientifico: 'Vicia Faba',
+      familia: 'Leguminosas',
+      descripcion:
+        'Leguminosa de grano grueso que tolera el frío y enriquece el suelo con nitrógeno.',
+      humedad: '55% - 75%',
+      luz: '6 - 8 hs',
+      temp: '12°C - 20°C',
+      ciclo: '90 - 150 días',
+      ph: '6.0 - 7.0',
+      nutrientes: ['Fósforo', 'Potasio'],
+      cicloMinDias: 90,
+      cicloMaxDias: 150,
+    },
+    Frijol: {
+      nombre: 'Frijol',
+      cientifico: 'Phaseolus Vulgaris',
+      familia: 'Leguminosas',
+      descripcion:
+        'Leguminosa de grano comestible muy difundida. Fija nitrógeno y mejora la estructura del suelo.',
+      humedad: '55% - 75%',
+      luz: '6 - 8 hs',
+      temp: '15°C - 25°C',
+      ciclo: '60 - 90 días',
+      ph: '6.0 - 7.0',
+      nutrientes: ['Fósforo', 'Potasio', 'Nitrógeno'],
+      cicloMinDias: 60,
+      cicloMaxDias: 90,
+    },
+    Arveja: {
+      nombre: 'Arveja',
+      cientifico: 'Pisum Sativum',
+      familia: 'Leguminosas',
+      descripcion:
+        'Leguminosa de vaina dulce, típica de climas frescos. Aporta nitrógeno al suelo en rotación.',
+      humedad: '55% - 75%',
+      luz: '6 - 8 hs',
+      temp: '12°C - 20°C',
+      ciclo: '60 - 100 días',
+      ph: '6.0 - 7.5',
+      nutrientes: ['Fósforo', 'Potasio'],
+      cicloMinDias: 60,
+      cicloMaxDias: 100,
+    },
+    Lenteja: {
+      nombre: 'Lenteja',
+      cientifico: 'Lens Culinaris',
+      familia: 'Leguminosas',
+      descripcion:
+        'Leguminosa de grano pequeño muy nutritiva. Resistente a la sequía y buena para suelos pobres.',
+      humedad: '50% - 70%',
+      luz: '6 - 8 hs',
+      temp: '15°C - 25°C',
+      ciclo: '90 - 110 días',
+      ph: '6.0 - 7.0',
+      nutrientes: ['Fósforo', 'Potasio'],
+      cicloMinDias: 90,
+      cicloMaxDias: 110,
+    },
+    Cebolla: {
+      nombre: 'Cebolla',
+      cientifico: 'Allium Cepa',
+      familia: 'Liliáceas',
+      descripcion:
+        'Hortaliza de bulbo aromático imprescindible en la cocina. Requiere suelos sueltos y buen drenaje.',
+      humedad: '50% - 70%',
+      luz: '6 - 8 hs',
+      temp: '12°C - 22°C',
+      ciclo: '120 - 180 días',
+      ph: '6.0 - 7.0',
+      nutrientes: ['Nitrógeno', 'Potasio', 'Fósforo'],
+      cicloMinDias: 120,
+      cicloMaxDias: 180,
+    },
+    Ajo: {
+      nombre: 'Ajo',
+      cientifico: 'Allium Sativum',
+      familia: 'Liliáceas',
+      descripcion:
+        'Bulbo aromático de gran valor culinario y medicinal. Cultivo rústico de clima frío.',
+      humedad: '50% - 70%',
+      luz: '6 - 8 hs',
+      temp: '10°C - 20°C',
+      ciclo: '150 - 210 días',
+      ph: '6.0 - 7.0',
+      nutrientes: ['Nitrógeno', 'Fósforo', 'Potasio'],
+      cicloMinDias: 150,
+      cicloMaxDias: 210,
+    },
+    Puerro: {
+      nombre: 'Puerro',
+      cientifico: 'Allium Ampeloprasum',
+      familia: 'Liliáceas',
+      descripcion:
+        'Hortaliza de tallo blanco y sabor suave, pariente de la cebolla. Se blanquea al aporcar.',
+      humedad: '50% - 70%',
+      luz: '6 - 8 hs',
+      temp: '12°C - 22°C',
+      ciclo: '120 - 180 días',
+      ph: '6.0 - 7.0',
+      nutrientes: ['Nitrógeno', 'Potasio'],
+      cicloMinDias: 120,
+      cicloMaxDias: 180,
+    },
+    Ciboulette: {
+      nombre: 'Ciboulette',
+      cientifico: 'Allium Schoenoprasum',
+      familia: 'Liliáceas',
+      descripcion:
+        'Hierba aromática perenne de hojas finas. Ideal para macetas y cosecha continua.',
+      humedad: '50% - 70%',
+      luz: '5 - 7 hs',
+      temp: '10°C - 22°C',
+      ciclo: '60 - 90 días',
+      ph: '6.0 - 7.0',
+      nutrientes: ['Nitrógeno', 'Potasio'],
+      cicloMinDias: 60,
+      cicloMaxDias: 90,
+    },
+    Lechuga: {
+      nombre: 'Lechuga',
+      cientifico: 'Lactuca Sativa',
+      familia: '',
+      descripcion:
+        'Hortaliza de hoja por excelencia para ensaladas. De crecimiento rápido y cosecha escalonada.',
+      humedad: '60% - 80%',
+      luz: '4 - 6 hs',
+      temp: '12°C - 20°C',
+      ciclo: '50 - 70 días',
+      ph: '6.0 - 7.0',
+      nutrientes: ['Nitrógeno', 'Potasio'],
+      cicloMinDias: 50,
+      cicloMaxDias: 70,
+    },
+    Acelga: {
+      nombre: 'Acelga',
+      cientifico: 'Beta Vulgaris Cicla',
+      familia: '',
+      descripcion:
+        'Hortaliza de hoja ancha y penca carnosa. Muy productiva, permite cosechas repetidas.',
+      humedad: '60% - 80%',
+      luz: '5 - 7 hs',
+      temp: '12°C - 22°C',
+      ciclo: '60 - 90 días',
+      ph: '6.0 - 7.0',
+      nutrientes: ['Nitrógeno', 'Potasio', 'Magnesio'],
+      cicloMinDias: 60,
+      cicloMaxDias: 90,
+    },
+    Espinaca: {
+      nombre: 'Espinaca',
+      cientifico: 'Spinacia Oleracea',
+      familia: '',
+      descripcion:
+        'Hoja verde rica en hierro y vitaminas. Prefiere climas frescos y riego regular.',
+      humedad: '60% - 80%',
+      luz: '4 - 6 hs',
+      temp: '10°C - 20°C',
+      ciclo: '40 - 60 días',
+      ph: '6.0 - 7.5',
+      nutrientes: ['Nitrógeno', 'Potasio', 'Hierro'],
+      cicloMinDias: 40,
+      cicloMaxDias: 60,
     },
   })
 
@@ -652,6 +1001,63 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setFamilias((prev) => prev.map((f) => (f.nombre === nombre ? { ...f, activa: false } : f)))
   }
 
+  const crearCultivo = (info: CultivoInfo) => {
+    setCultivosData((prev) => ({ ...prev, [info.nombre]: info }))
+    if (info.familia) {
+      setFamilias((prev) =>
+        prev.map((f) =>
+          f.nombre === info.familia && !f.cultivos.includes(info.nombre)
+            ? { ...f, cultivos: [...f.cultivos, info.nombre] }
+            : f
+        )
+      )
+    }
+  }
+
+  const modificarCultivo = (nombreAnterior: string, info: CultivoInfo) => {
+    setCultivosData((prev) => {
+      const next = { ...prev }
+      delete next[nombreAnterior]
+      next[info.nombre] = info
+      return next
+    })
+    setFamilias((prev) =>
+      prev.map((f) => {
+        const sinAnterior = f.cultivos.filter((c) => c !== nombreAnterior)
+        if (info.familia === f.nombre && !sinAnterior.includes(info.nombre)) {
+          return { ...f, cultivos: [...sinAnterior, info.nombre] }
+        }
+        return { ...f, cultivos: sinAnterior }
+      })
+    )
+  }
+
+  const eliminarCultivo = (nombre: string) => {
+    setCultivosData((prev) => {
+      const next = { ...prev }
+      delete next[nombre]
+      return next
+    })
+    setFamilias((prev) =>
+      prev.map((f) => ({ ...f, cultivos: f.cultivos.filter((c) => c !== nombre) }))
+    )
+  }
+
+  const asignarCultivoAFamilia = (cultivo: string, familia: string) => {
+    setCultivosData((prev) =>
+      prev[cultivo] ? { ...prev, [cultivo]: { ...prev[cultivo], familia } } : prev
+    )
+    setFamilias((prev) =>
+      prev.map((f) => {
+        const sinCultivo = f.cultivos.filter((c) => c !== cultivo)
+        if (f.nombre === familia) {
+          return { ...f, cultivos: [...sinCultivo, cultivo] }
+        }
+        return { ...f, cultivos: sinCultivo }
+      })
+    )
+  }
+
   const actualizarUsuario = (u: Usuario) => {
     setUsuario(u)
   }
@@ -694,6 +1100,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         agregarFamilia,
         modificarFamilia,
         darDeBajaFamilia,
+        crearCultivo,
+        modificarCultivo,
+        eliminarCultivo,
+        asignarCultivoAFamilia,
         actualizarUsuario,
         agregarDesvio,
         marcarDesvioCorregido,
