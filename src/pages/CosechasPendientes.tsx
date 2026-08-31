@@ -154,9 +154,16 @@ function CosechaHarvest({
                 <div className="flex items-center gap-1">
                   <input
                     type="number"
+                    min={0}
+                    step="any"
                     placeholder="0"
                     value={kilos[c] || ''}
-                    onChange={(e) => setKilos({ ...kilos, [c]: e.target.value })}
+                    onChange={(e) => {
+                      const nextValue = e.target.value
+                      if (nextValue === '' || Number(nextValue) >= 0) {
+                        setKilos({ ...kilos, [c]: nextValue })
+                      }
+                    }}
                     className="w-20 border border-[var(--border)] rounded-lg px-2 py-1 text-sm outline-none focus:border-[var(--primary)] text-right"
                   />
                   <span className="text-sm font-semibold" style={{ color: 'var(--muted-foreground)' }}>
