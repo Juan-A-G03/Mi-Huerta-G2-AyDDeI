@@ -1,15 +1,7 @@
 import { useState } from 'react'
 import Header from '../components/Header'
 import type { NavContext } from '../types'
-
-export const familiasData = [
-  { nombre: 'Tubérculos', ejemplos: 'papas, camote, yuca...', activa: true },
-  { nombre: 'Solanáceas', ejemplos: 'tomate, morrón, berenjena...', activa: true },
-  { nombre: 'Cucurbitáceas', ejemplos: 'zapallo, pepino, sandía...', activa: true },
-  { nombre: 'Crucíferas', ejemplos: 'brócoli, repollo,...', activa: true },
-  { nombre: 'Leguminosas', ejemplos: 'habas, frijoles', activa: true },
-  { nombre: 'Liliáceas', ejemplos: 'cebolla, ajo', activa: true },
-]
+import { useData } from '../context/DataContext'
 
 export default function Familias({ ctx }: { ctx: NavContext }) {
   const [submenu, setSubmenu] = useState<'list' | null>(null)
@@ -25,21 +17,23 @@ export default function Familias({ ctx }: { ctx: NavContext }) {
       <main className="max-w-xs mx-auto px-4 pt-14 pb-16">
         <div className="bg-white rounded-2xl border border-[var(--border)] shadow-sm overflow-hidden">
           <div className="px-4 py-3 font-bold text-sm border-b border-[var(--border)]"
-            style={{ color: 'var(--foreground)' }}>Familias</div>
-          {[
-            { label: 'Mis plantaciones', arrow: true },
-            { label: 'Otros', arrow: true },
-          ].map(({ label, arrow }) => (
-            <button
-              key={label}
-              onClick={() => setSubmenu('list')}
-              className="w-full flex items-center justify-between px-4 py-3 text-sm border-t border-[var(--border)] hover:bg-[var(--secondary)] transition-colors"
-              style={{ color: 'var(--foreground)' }}
-            >
-              {label}
-              {arrow && <span style={{ color: 'var(--muted-foreground)' }}>›</span>}
-            </button>
-          ))}
+            style={{ color: 'var(--foreground)' }}>Familias y Cultivos</div>
+          <button
+            onClick={() => setSubmenu('list')}
+            className="w-full flex items-center justify-between px-4 py-3 text-sm border-t border-[var(--border)] hover:bg-[var(--secondary)] transition-colors"
+            style={{ color: 'var(--foreground)' }}
+          >
+            Familias
+            <span style={{ color: 'var(--muted-foreground)' }}>›</span>
+          </button>
+          <button
+            onClick={() => ctx.navigateTo('cultivos')}
+            className="w-full flex items-center justify-between px-4 py-3 text-sm border-t border-[var(--border)] hover:bg-[var(--secondary)] transition-colors"
+            style={{ color: 'var(--foreground)' }}
+          >
+            Cultivos
+            <span style={{ color: 'var(--muted-foreground)' }}>›</span>
+          </button>
         </div>
       </main>
     </div>
@@ -47,6 +41,9 @@ export default function Familias({ ctx }: { ctx: NavContext }) {
 }
 
 function FamiliasList({ ctx, onBack }: { ctx: NavContext; onBack: () => void }) {
+  const { familias } = useData()
+  const familiasActivas = familias.filter((f) => f.activa)
+
   return (
     <div className="min-h-screen" style={{ background: 'var(--background)' }}>
       <Header ctx={ctx} />
@@ -55,7 +52,7 @@ function FamiliasList({ ctx, onBack }: { ctx: NavContext; onBack: () => void }) 
         <div className="flex items-center justify-between mb-6">
           <button onClick={onBack} className="flex items-center gap-1 text-sm font-semibold"
             style={{ color: 'var(--accent)' }}>
-            ‹ Lista de familias
+            ‹ Familias y Cultivos
           </button>
           <button
             onClick={() => ctx.navigateTo('familia-crear')}
@@ -67,7 +64,7 @@ function FamiliasList({ ctx, onBack }: { ctx: NavContext; onBack: () => void }) 
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {familiasData.map(f => (
+          {familiasActivas.map(f => (
             <div
               key={f.nombre}
               className="bg-white rounded-2xl border border-[var(--border)] overflow-hidden shadow-sm"

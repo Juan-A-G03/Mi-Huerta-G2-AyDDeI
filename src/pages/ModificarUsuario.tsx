@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import Header from '../components/Header'
 import type { NavContext } from '../types'
+import { useData } from '../context/DataContext'
 
 export default function ModificarUsuario({ ctx }: { ctx: NavContext }) {
-  const [form, setForm] = useState({ nombre: 'Juan', apellido: 'Fernandez', mail: 'fernandez@mail.com', telefono: '1234567890', localidad: 'CABA' })
+  const { usuario, actualizarUsuario } = useData()
+  const [form, setForm] = useState({ nombre: usuario.nombre, apellido: usuario.apellido, mail: usuario.mail, telefono: usuario.telefono, localidad: usuario.localidad })
   const [showConfirm, setShowConfirm] = useState(false)
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -55,7 +57,7 @@ export default function ModificarUsuario({ ctx }: { ctx: NavContext }) {
                 className="flex-1 py-2 rounded-lg font-bold text-sm border border-[var(--border)] hover:bg-[var(--secondary)]">
                 Cancelar
               </button>
-              <button onClick={() => { setShowConfirm(false); ctx.navigateTo('perfil') }}
+              <button onClick={() => { actualizarUsuario(form); setShowConfirm(false); ctx.navigateTo('perfil') }}
                 className="flex-1 py-2 rounded-lg font-bold text-sm text-white"
                 style={{ background: 'var(--primary)' }}>
                 SI

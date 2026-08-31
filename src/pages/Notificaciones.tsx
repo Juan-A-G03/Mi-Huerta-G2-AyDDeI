@@ -1,27 +1,26 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import type { NavContext } from '../types'
 import { useData } from '../context/DataContext'
 
-const desviosData = [
-  { id: 26, tipo: 'Riego', motivo: 'Humedad Baja (40%)', modulo: 6, cultivo: 'Papa', fecha: '04/05/2026' },
-  { id: 25, tipo: 'Invernadero', motivo: 'Helada (5°C)', modulo: 7, cultivo: 'Batata', fecha: '02/05/2026' },
-  { id: 24, tipo: 'Invernadero', motivo: 'Helada (6°C)', modulo: 6, cultivo: 'Papa', fecha: '02/05/2026' },
-]
-
 export default function Notificaciones({ ctx }: { ctx: NavContext }) {
-  const { notificaciones, aceptarNotificacion, rechazarNotificacion } = useData()
+  const { notificaciones, desvios, aceptarNotificacion, rechazarNotificacion, limpiarNotificacionesAceptadas } = useData()
   const [tab, setTab] = useState<'notif' | 'desvios'>('notif')
   const [desvioDetail, setDesvioDetail] = useState<number | null>(null)
 
+  useEffect(() => {
+    return () => {
+      limpiarNotificacionesAceptadas()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const handleAccept = (id: string) => {
     aceptarNotificacion(id)
-    ctx.setNotifCount(Math.max(0, ctx.notifCount - 1))
   }
 
   const handleReject = (id: string) => {
     rechazarNotificacion(id)
-    ctx.setNotifCount(Math.max(0, ctx.notifCount - 1))
   }
 
   return (
@@ -123,7 +122,7 @@ export default function Notificaciones({ ctx }: { ctx: NavContext }) {
               <span>Módulo/Cultivo</span>
               <span>Fecha</span>
             </div>
-            {desviosData.map((d) => (
+            {desvios.map((d) => (
               <div
                 key={d.id}
                 className="grid grid-cols-5 items-center text-xs px-4 py-3 border-t border-[var(--border)]"
@@ -153,7 +152,7 @@ export default function Notificaciones({ ctx }: { ctx: NavContext }) {
       {/* Desvío detail modal */}
       {desvioDetail !== null &&
         (() => {
-          const d = desviosData.find((x) => x.id === desvioDetail)!
+          const d = desvios.find((x) => x.id === desvioDetail)!
           return (
             <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
               <div className="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full border border-[var(--border)]">

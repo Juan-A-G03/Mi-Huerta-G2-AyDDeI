@@ -10,9 +10,11 @@ export default function SiembraForm({ ctx }: { ctx: NavContext }) {
   const familia = (ctx.params.familia as string) || 'Tubérculos'
   const cultivo = (ctx.params.cultivo as string) || 'Papa'
 
-  const today = new Date().toISOString().split('T')[0]
+  const now = new Date()
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+  const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
   const [fecha, setFecha] = useState(today)
-  const [hora, setHora] = useState('08:00')
+  const [hora, setHora] = useState(currentTime)
   const [showCalendario, setShowCalendario] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
 

@@ -4,6 +4,7 @@ import {
 } from 'recharts'
 import Header from '../components/Header'
 import type { NavContext } from '../types'
+import { useData } from '../context/DataContext'
 
 const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
 
@@ -18,11 +19,11 @@ const data = meses.map((mes, i) => ({
   luz2024: 7.5 + Math.sin(i * 0.8 + 1.2) * 2.5,
 }))
 
-const modulos = ['#5', '#3', '#7', '#1', '#2']
-
 type Sensor = 'humedad' | 'temp' | 'luz'
 
 export default function Reportes({ ctx }: { ctx: NavContext }) {
+  const { modulos: modulosCtx } = useData()
+  const modulos = modulosCtx.map((m) => m.nombre.replace('Módulo ', ''))
   const [modulo, setModulo] = useState('#5')
   const [desde, setDesde] = useState('2023-01-01')
   const [hasta, setHasta] = useState('2024-12-31')

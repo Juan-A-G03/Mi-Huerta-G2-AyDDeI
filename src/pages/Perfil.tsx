@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import Header from '../components/Header'
 import type { NavContext } from '../types'
+import { useData } from '../context/DataContext'
 
 export default function Perfil({ ctx }: { ctx: NavContext }) {
+  const { usuario } = useData()
   const [showDesactivar, setShowDesactivar] = useState(false)
 
   return (
@@ -19,10 +21,10 @@ export default function Perfil({ ctx }: { ctx: NavContext }) {
               style={{ borderColor: 'var(--primary)', background: 'var(--secondary)' }}>
               <span className="text-5xl">👤</span>
             </div>
-            <h3 className="text-xl font-bold" style={{ color: 'var(--foreground)' }}>Juan Fernandez</h3>
-            <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>fernandezjuan@mail.com</p>
-            <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Rosario, Argentina</p>
-            <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>1234567890</p>
+            <h3 className="text-xl font-bold" style={{ color: 'var(--foreground)' }}>{usuario.nombre} {usuario.apellido}</h3>
+            <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>{usuario.mail}</p>
+            <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>{usuario.localidad}</p>
+            <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>{usuario.telefono}</p>
           </div>
 
           <div className="flex flex-col gap-2">

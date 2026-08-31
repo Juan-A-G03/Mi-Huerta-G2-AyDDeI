@@ -6,6 +6,8 @@ export type Page =
   | 'familias'
   | 'familia-detalle'
   | 'familia-crear'
+  | 'cultivos'
+  | 'cultivo-crear'
   | 'cultivos-aceptados'
   | 'modulos-disponibles'
   | 'siembras-finalizar'
@@ -29,6 +31,4 @@ export interface NavContext {
   navigateTo: (page: Page, params?: Record<string, unknown>) => void
   goBack: () => void
   params: Record<string, unknown>
-  notifCount: number
-  setNotifCount: (n: number) => void
 }
