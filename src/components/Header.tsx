@@ -11,7 +11,9 @@ interface HeaderProps {
 
 export default function Header({ ctx, showBack, backLabel, backPage }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false)
-  const { showPopover, dismissPopover } = useData()
+  const { showPopover, dismissPopover, notificaciones } = useData()
+
+  const notifCount = notificaciones.filter((n) => !n.leida).length
 
   const fechaInicioSiembra = getFormattedToday(3) // 3 días posterior a la fecha actual
   const fechaFinSiembra = getFormattedToday(30) // 30 días posterior a la fecha actual
@@ -44,9 +46,9 @@ export default function Header({ ctx, showBack, backLabel, backPage }: HeaderPro
             aria-label="Notificaciones"
           >
             <span className="text-xl">🔔</span>
-            {ctx.notifCount > 0 && (
+            {notifCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
-                {ctx.notifCount}
+                {notifCount}
               </span>
             )}
           </button>

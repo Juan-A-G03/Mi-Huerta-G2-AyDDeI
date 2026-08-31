@@ -1,15 +1,7 @@
 import { useState } from 'react'
 import Header from '../components/Header'
 import type { NavContext } from '../types'
-
-export const familiasData = [
-  { nombre: 'Tubérculos', ejemplos: 'papas, camote, yuca...', activa: true },
-  { nombre: 'Solanáceas', ejemplos: 'tomate, morrón, berenjena...', activa: true },
-  { nombre: 'Cucurbitáceas', ejemplos: 'zapallo, pepino, sandía...', activa: true },
-  { nombre: 'Crucíferas', ejemplos: 'brócoli, repollo,...', activa: true },
-  { nombre: 'Leguminosas', ejemplos: 'habas, frijoles', activa: true },
-  { nombre: 'Liliáceas', ejemplos: 'cebolla, ajo', activa: true },
-]
+import { useData } from '../context/DataContext'
 
 export default function Familias({ ctx }: { ctx: NavContext }) {
   const [submenu, setSubmenu] = useState<'list' | null>(null)
@@ -47,6 +39,9 @@ export default function Familias({ ctx }: { ctx: NavContext }) {
 }
 
 function FamiliasList({ ctx, onBack }: { ctx: NavContext; onBack: () => void }) {
+  const { familias } = useData()
+  const familiasActivas = familias.filter((f) => f.activa)
+
   return (
     <div className="min-h-screen" style={{ background: 'var(--background)' }}>
       <Header ctx={ctx} />
@@ -67,7 +62,7 @@ function FamiliasList({ ctx, onBack }: { ctx: NavContext; onBack: () => void }) 
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {familiasData.map(f => (
+          {familiasActivas.map(f => (
             <div
               key={f.nombre}
               className="bg-white rounded-2xl border border-[var(--border)] overflow-hidden shadow-sm"

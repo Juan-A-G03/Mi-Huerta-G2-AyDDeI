@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import Header from '../components/Header'
 import type { NavContext } from '../types'
+import { useData, type Familia } from '../context/DataContext'
 
 export default function FamiliaCrear({ ctx }: { ctx: NavContext }) {
+  const { agregarFamilia, modificarFamilia } = useData()
   const esEdicion = ctx.params.editar === true
   const nombre = (ctx.params.familia as string) || ''
 
@@ -24,6 +26,22 @@ export default function FamiliaCrear({ ctx }: { ctx: NavContext }) {
 
   const handleGuardar = (e: React.FormEvent) => {
     e.preventDefault()
+    const data: Familia = {
+      nombre: form.nombre,
+      ejemplos: '',
+      activa: true,
+      descripcion: form.descripcion,
+      humedad: `${form.humedadMin}% - ${form.humedadMax}%`,
+      luz: `${form.luzMin} - ${form.luzMax} hs`,
+      temp: `${form.tempMin}°C - ${form.tempMax}°C`,
+      ciclo: `${form.fechaInicio} - ${form.fechaFin}`,
+      cultivos: [],
+    }
+    if (esEdicion) {
+      modificarFamilia(nombre, data)
+    } else {
+      agregarFamilia(data)
+    }
     ctx.navigateTo('familias')
   }
 

@@ -3,11 +3,11 @@ import type { NavContext } from '../types'
 import { useData } from '../context/DataContext'
 
 export default function CultivosAceptados({ ctx }: { ctx: NavContext }) {
-  const { notificaciones } = useData()
+  const { familiasAceptadas, familiasAsignadas } = useData()
 
-  // Filtramos estrictamente las notificaciones de siembra que hayan sido ACEPTADAS por el usuario
-  const familiasAceptadas = notificaciones.filter(
-    (n) => n.tipo === 'siembra' && n.accepted === true
+  // Familias aceptadas que aun no tienen modulo asignado
+  const familiasPendientes = familiasAceptadas.filter(
+    (f) => !familiasAsignadas.includes(f.familia)
   )
 
   return (
@@ -19,7 +19,7 @@ export default function CultivosAceptados({ ctx }: { ctx: NavContext }) {
           Lista de cultivos aceptados pendientes
         </h2>
 
-        {familiasAceptadas.length === 0 ? (
+        {familiasPendientes.length === 0 ? (
           <div className="bg-white rounded-2xl border border-[var(--border)] p-8 text-center shadow-xs">
             <span className="text-4xl mb-3 block">🌿</span>
             <h3 className="font-bold text-base text-[var(--foreground)] mb-1">
@@ -38,10 +38,11 @@ export default function CultivosAceptados({ ctx }: { ctx: NavContext }) {
           </div>
         ) : (
           <div className="flex flex-col gap-3">
-            {familiasAceptadas.map((a) => (
-              <div
+            {familiasPendientes.map((a) => (
+              <button
                 key={a.id}
-                className="bg-white rounded-2xl border border-[var(--border)] shadow-sm p-4 flex items-start gap-3 transition-all hover:border-[var(--primary)]"
+                onClick={() => ctx.navigateTo('modulos-disponibles', { familia: a.familia })}
+                className="bg-white rounded-2xl border border-[var(--border)] shadow-sm p-4 flex items-start gap-3 transition-all hover:border-[var(--primary)] text-left cursor-pointer"
               >
                 <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border border-[var(--border)]"
@@ -56,41 +57,26 @@ export default function CultivosAceptados({ ctx }: { ctx: NavContext }) {
                   <p className="text-xs text-[var(--muted-foreground)]">
                     {a.ejemplos || 'papas, batata, zanahoria...'}
                   </p>
-                  {a.familia && (
-                    <button
-                      onClick={() => ctx.navigateTo('familia-detalle', { familia: a.familia })}
-                      className="text-xs font-semibold hover:underline mt-1 block cursor-pointer"
-                      style={{ color: 'var(--accent)' }}
-                    >
-                      Ver detalles e info de la familia →
-                    </button>
-                  )}
+                  <span
+                    className="text-xs font-semibold mt-1 inline-block"
+                    style={{ color: 'var(--accent)' }}
+                  >
+                    Asignar módulo →
+                  </span>
                 </div>
                 <div className="text-right shrink-0">
                   <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-700 border border-green-200 mb-1">
                     ✓ ACEPTADO
                   </span>
                   <p className="text-[10px]" style={{ color: 'var(--muted-foreground)' }}>
-                    aceptado el {a.fechaAceptado || a.fecha}
+                    aceptado el {a.fechaAceptado}
                   </p>
-                  {a.horaAceptado && (
-                    <p className="text-[10px]" style={{ color: 'var(--muted-foreground)' }}>
-                      a las {a.horaAceptado}
-                    </p>
-                  )}
+                  <p className="text-[10px]" style={{ color: 'var(--muted-foreground)' }}>
+                    a las {a.horaAceptado}
+                  </p>
                 </div>
-              </div>
-            ))}
-
-            <div className="mt-6 flex justify-center">
-              <button
-                onClick={() => ctx.navigateTo('modulos-disponibles')}
-                className="px-6 py-2.5 rounded-xl text-white font-bold text-sm shadow-sm hover:opacity-90 transition-opacity cursor-pointer"
-                style={{ background: 'var(--primary)' }}
-              >
-                Asignar Módulos para Siembra →
               </button>
-            </div>
+            ))}
           </div>
         )}
       </main>

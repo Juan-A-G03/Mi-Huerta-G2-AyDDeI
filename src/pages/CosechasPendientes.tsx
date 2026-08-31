@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Header from '../components/Header'
 import type { NavContext } from '../types'
-import { useData } from '../context/DataContext'
+import { useData, compareDdMm, getFormattedToday } from '../context/DataContext'
 
 export default function CosechasPendientes({ ctx }: { ctx: NavContext }) {
   const { cosechas, completarCosecha } = useData()
@@ -10,7 +10,10 @@ export default function CosechasPendientes({ ctx }: { ctx: NavContext }) {
   )
   const [kilos, setKilos] = useState<Record<string, string>>({})
 
-  const pendientesActivas = cosechas.filter((c) => !c.completada)
+  const hoy = getFormattedToday()
+  const pendientesActivas = cosechas.filter(
+    (c) => !c.completada && compareDdMm(hoy, c.fechaDesde) >= 0 && compareDdMm(hoy, c.fechaHasta) <= 0
+  )
 
   const handleHarvestClick = (c: (typeof cosechas)[0]) => {
     let cultivoList = [c.cultivo]

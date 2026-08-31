@@ -32,7 +32,6 @@ export default function App() {
   const [history, setHistory] = useState<Array<{ page: Page; params: Record<string, unknown> }>>([
     { page: 'menu', params: {} },
   ])
-  const [notifCount, setNotifCount] = useState(3)
 
   const current = history[history.length - 1]
 
@@ -48,8 +47,6 @@ export default function App() {
     navigateTo,
     goBack,
     params: current.params,
-    notifCount,
-    setNotifCount,
   }
 
   const pageMap: Record<Page, React.ReactNode> = {

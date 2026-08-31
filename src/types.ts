@@ -29,6 +29,4 @@ export interface NavContext {
   navigateTo: (page: Page, params?: Record<string, unknown>) => void
   goBack: () => void
   params: Record<string, unknown>
-  notifCount: number
-  setNotifCount: (n: number) => void
 }
